@@ -27,6 +27,7 @@ Playlist::~Playlist() {
         current = next_node;
     }
     head = nullptr;
+    track_count = 0;
 
 }
 
