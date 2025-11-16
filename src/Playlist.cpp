@@ -12,6 +12,22 @@ Playlist::~Playlist() {
     #ifdef DEBUG
     std::cout << "Destroying playlist: " << playlist_name << std::endl;
     #endif
+
+    // FIX: Iterate and delete every PlaylistNode
+    PlaylistNode* current = head;
+    PlaylistNode* next_node = nullptr;
+
+    while (current) {
+        next_node = current->next;
+        
+        // Ownership Model: Only delete the node itself.
+        // The AudioTrack object is managed elsewhere.
+        delete current; 
+
+        current = next_node;
+    }
+    head = nullptr;
+
 }
 
 void Playlist::add_track(AudioTrack* track) {
@@ -23,7 +39,7 @@ void Playlist::add_track(AudioTrack* track) {
     // Create new node - this allocates memory!
     PlaylistNode* new_node = new PlaylistNode(track);
 
-    // Add to front of list
+    // Add to front of list 
     new_node->next = head;
     head = new_node;
     track_count++;
@@ -49,6 +65,8 @@ void Playlist::remove_track(const std::string& title) {
         } else {
             head = current->next;
         }
+        //Delete the playlist node itself (and not only the pointers to it)
+        delete current;
 
         track_count--;
         std::cout << "Removed '" << title << "' from playlist" << std::endl;
