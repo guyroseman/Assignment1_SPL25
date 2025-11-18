@@ -37,7 +37,10 @@ public:
      * Think about ownership and resource management.
      * Is the default destructor sufficient here?
      */
-    ~PointerWrapper() =default;
+    ~PointerWrapper(){
+        delete ptr;
+        ptr = nullptr;
+    };
 
     // ========== COPY OPERATIONS (DELETED) ==========
 
@@ -60,7 +63,12 @@ public:
      * HINT: How should ownership transfer from one wrapper to another?
      * What should happen to the source wrapper after the move?
      */
-    PointerWrapper(PointerWrapper&& other) noexcept {}
+    PointerWrapper(PointerWrapper&& other) noexcept {
+        // Call ptr copy constructor
+        // Null other's ptr and by that moves ownership to this 
+        ptr = other.ptr;
+        other.ptr = nullptr;
+    }
 
     /**
      * TODO: Implement move assignment operator
@@ -68,6 +76,19 @@ public:
      * Don't forget about self-assignment!
      */
     PointerWrapper& operator=(PointerWrapper&& other) noexcept {
+        // Handle Self-Assignment Check
+        if(this == &other){
+            return *this;
+        }
+        // Delete the heap memory *this* currently owns. This prevents a memory leak.
+        delete ptr;
+
+        // Steal ownership - transfer pointer from other to this
+        ptr = other.ptr;
+
+        // Null source - make sure there is no double pointing thus prevenet a double-delete
+        other.ptr = nullptr;
+
         return *this;
     }
 
@@ -80,6 +101,9 @@ public:
      */
 
     T& operator*() const {
+        if (ptr == nullptr) {
+            throw std::runtime_error("Attempted to dereference a null PointerWrapper.");
+        }
         return *ptr;
     };
 
@@ -89,7 +113,11 @@ public:
      * What safety checks should you perform?
      */
     T* operator->() const {
-        return nullptr;
+        if (ptr == nullptr) {
+            throw std::runtime_error("Attempted to access member of null PointerWrapper.");
+        }
+        // The arrow operator must return the raw pointer itself.
+        return ptr;
     }
 
     /**
@@ -99,7 +127,11 @@ public:
      * @throws std::runtime_error if ptr is null
      */
     T* get() const {
-        return nullptr; // Placeholder
+        if (ptr == nullptr) {
+            throw std::runtime_error("Attempted to access member of null PointerWrapper.");
+        }
+        // The arrow operator must return the raw pointer itself.
+        return ptr;
     }
 
     // ========== OWNERSHIP MANAGEMENT ==========
@@ -110,7 +142,14 @@ public:
      * Should the wrapper still own the pointer after calling release()?
      */
     T* release() {
-        return nullptr;
+      // Store the pointer value to be returned.
+        T* curr = ptr;
+        
+        // Remove ownership by setting the internal pointer to nullptr.
+        ptr = nullptr;
+        
+        // Return the raw pointer to the new owner.
+        return curr;
     }
 
     /**
@@ -119,6 +158,17 @@ public:
      * What should happen to the old pointer?
      */
     void reset(T* new_ptr = nullptr) {
+        
+        // Handle Self-Assignment Check
+        if(ptr == new_ptr){
+            return;
+        }
+
+        // Delete the heap memory *this* currently owns. This prevents a memory leak.
+        delete ptr;
+
+        // Assign this new ptr ownership
+        ptr = new_ptr;
     }
 
     // ========== UTILITY FUNCTIONS ==========
@@ -129,7 +179,7 @@ public:
      * Why might the explicit keyword be important here?
      */
     explicit operator bool() const {
-        return false; //placeholder
+        return ptr != nullptr;
     }
 
     /**
@@ -160,9 +210,7 @@ PointerWrapper<T> make_pointer_wrapper(Args&&... args) {
  */
 template<typename T>
 void swap(PointerWrapper<T>& lhs, PointerWrapper<T>& rhs) noexcept {
-    // TODO: Implement global swap function
-    // HINT: You can use the member swap function
-    //your code here...
+    lhs.swap(rhs);
 }
 
 #endif // POINTERWRAPPER_H
