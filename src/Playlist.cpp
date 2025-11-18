@@ -20,8 +20,9 @@ Playlist::~Playlist() {
     while (current) {
         next_node = current->next;
         
-        // Ownership Model: Only delete the node itself.
-        // The AudioTrack object is managed elsewhere.
+        // Delete the AudioTrack object BEFORE deleting the node.
+        // This assumes the Playlist has ownership of the tracks as they are copied into it.
+        delete current->track;
         delete current; 
 
         current = next_node;
@@ -66,6 +67,8 @@ void Playlist::remove_track(const std::string& title) {
         } else {
             head = current->next;
         }
+        //delete the audio track as the playlist holds a copy of the original track
+        delete current->track;
         //Delete the playlist node itself (and not only the pointers to it)
         delete current;
 
