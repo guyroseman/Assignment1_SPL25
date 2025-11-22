@@ -5,7 +5,7 @@
         "plaintext": false,
         "markdown": false,
         "scminput": false,
-        "cpp": true,
+        "cpp": false,
         "c": false,
         "h": false
     },
