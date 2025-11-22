@@ -63,8 +63,33 @@ bool DJSession::load_playlist(const std::string& playlist_name)  {
 
  */
 int DJSession::load_track_to_controller(const std::string& track_name) {
-    // Your implementation here
-    return 0; // Placeholder
+    // (a) Find track in library 
+    PointerWrapper<AudioTrack> track(library_service.findTrack(track_name));
+
+    // (b) If track not found, log error and return 0 (MISS)
+    if (track) {
+        std::cerr << "[ERROR] Track '" << track_name << "' not found in library.\n";
+        stats.errors++;
+        return 0; // MISS
+    }
+
+    // (c) 
+    std::cout << "[System] Loading track '" << track_name << "' to controller..." << std::endl;
+
+    // (d) load track and hold eviction result 
+    int evict_result = controller_service.loadTrackToCache(*track); 
+
+    // (e) Interpret return value according to contract
+     if(evict_result==1){
+       stats.cache_hits++;
+    } else if(evict_result==0){
+       stats.cache_misses++;
+    } else if(evict_result==-1){
+       stats.cache_misses++;
+       stats.cache_evictions++;
+    }
+
+    return evict_result;
 }
 
 /**
