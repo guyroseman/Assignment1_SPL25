@@ -63,11 +63,11 @@ bool DJSession::load_playlist(const std::string& playlist_name)  {
 
  */
 int DJSession::load_track_to_controller(const std::string& track_name) {
-    // (a) Find track in library 
-    PointerWrapper<AudioTrack> track(library_service.findTrack(track_name));
+    // (a) Find track in library (non-owning raw pointer)
+    AudioTrack* track = library_service.findTrack(track_name);
 
     // (b) If track not found, log error and return 0 (MISS)
-    if (track) {
+    if (!track) {
         std::cerr << "[ERROR] Track '" << track_name << "' not found in library.\n";
         stats.errors++;
         return 0; // MISS
@@ -101,8 +101,8 @@ int DJSession::load_track_to_controller(const std::string& track_name) {
  */
 bool DJSession::load_track_to_mixer_deck(const std::string& track_title) {
     std::cout << "[System] Delegating track transfer to MixingEngineService for: " << track_title << std::endl;
-    // (a) Retrieve track from controller cache
-    PointerWrapper<AudioTrack> track(controller_service.getTrackFromCache(track_title));
+    // (a) Retrieve track from controller cache (non-owning raw pointer)
+    AudioTrack* track = controller_service.getTrackFromCache(track_title);
 
     // (b) If track not found in cache, log error and return false
     if (!track) {
@@ -221,7 +221,7 @@ void DJSession::simulate_dj_performance() {
             // Load playlist
             if(!load_playlist(selected_playlist)){ // (d) breaks when the user selects so
                 // Log error and continue to next playlist
-                std::cerr << "[Error] Playlist " << selected_playlist << "failed to load" << std::endl;
+                std::cerr << "[Error] Playlist " << selected_playlist << " failed to load" << std::endl;
                 continue;
             }
 

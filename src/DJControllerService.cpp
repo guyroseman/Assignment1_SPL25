@@ -27,7 +27,7 @@ int DJControllerService::loadTrackToCache(AudioTrack& track) {
     }
     
     // Simulate loading on the cloned track, and do a beatgrid analysis.
-    AudioTrack* clone_ptr = track_clone.get();
+    AudioTrack* clone_ptr = track_clone.release();
     clone_ptr->load();
     clone_ptr->analyze_beatgrid();
 

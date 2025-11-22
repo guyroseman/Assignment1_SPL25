@@ -96,8 +96,8 @@ void DJLibraryService::loadPlaylistFromIndices(const std::string& playlist_name,
     // (a) Print Log
     std::cout << "[INFO] Loading playlist: " << playlist_name << std::endl;
 
-    // (b) Create a new Playlist with the given name 
-    Playlist newPlaylist(playlist_name);
+    // (b) Create a new Playlist with the given name and update member variable
+    playlist = Playlist(playlist_name);
 
     // (c) For each index in track_indices, add the corresponding track from library to the playlist
     for (int i = 0; i < track_indices.size(); ++i){
@@ -125,14 +125,14 @@ void DJLibraryService::loadPlaylistFromIndices(const std::string& playlist_name,
             std::string track_title = cloned_track->get_title(); 
 
             // Add cloned track to playlist
-            newPlaylist.add_track(cloned_track.release());
+            playlist.add_track(cloned_track.release());
 
             // log addition
             std::cout << "Added '" << track_title << "' to playlist '" << playlist_name << "'" << std::endl;
         }   
     }
     // log summary 
-    std::cout << "[INFO] Playlist loaded: " << playlist_name << " (" << newPlaylist.get_track_count() << " tracks)" << std::endl;
+    std::cout << "[INFO] Playlist loaded: " << playlist_name << " (" << playlist.get_track_count() << " tracks)" << std::endl;
 
     // For now, add a placeholder to fix the linker error
     (void)playlist_name;  // Suppress unused parameter warning
