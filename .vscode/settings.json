@@ -1,11 +1,11 @@
 {
     // Disable GitHub Copilot
     "github.copilot.enable": {
-        "*": true,
+        "*": false,
         "plaintext": false,
         "markdown": false,
         "scminput": false,
-        "cpp": true,
+        "cpp": false,
         "c": false,
         "h": false
     },
