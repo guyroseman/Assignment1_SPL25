@@ -32,6 +32,46 @@ Playlist::~Playlist() {
 
 }
 
+Playlist::Playlist(const Playlist& other)
+    : head(nullptr), playlist_name(other.playlist_name), track_count(0) {
+
+    // Deep copy each track from the other playlist
+    PlaylistNode* current = other.head;
+    while (current) {
+        // Clone the AudioTrack to ensure deep copy
+        AudioTrack* cloned_track = current->track->clone().release();
+        add_track(cloned_track);
+        current = current->next;
+    }
+}
+
+Playlist& Playlist::operator=(const Playlist& other) {
+
+    // Self-assignment check
+    if (this == &other) {
+        return *this;
+    }
+
+    // Clean up existing resources
+    this->~Playlist();
+
+    // Copy playlist name
+    playlist_name = other.playlist_name;
+    head = nullptr;
+    track_count = 0;
+
+    // Deep copy each track from the other playlist
+    PlaylistNode* current = other.head;
+    while (current) {
+        // Clone the AudioTrack to ensure deep copy
+        AudioTrack* cloned_track = current->track->clone().release();
+        add_track(cloned_track);
+        current = current->next;
+    }
+
+    return *this;
+}
+
 void Playlist::add_track(AudioTrack* track) {
     if (!track) {
         std::cout << "[Error] Cannot add null track to playlist" << std::endl;

@@ -184,7 +184,7 @@ void DJSession::simulate_dj_performance() {
         std::sort(playlist_names.begin(), playlist_names.end());
 
         // (c) + (d) Iterate through all playlists
-        for(int i = 0; i < playlist_names.size(); i++){
+        for(size_t i = 0; i < playlist_names.size(); i++){
             
             // Load playlist
             if(!load_playlist(playlist_names[i])){
@@ -194,13 +194,13 @@ void DJSession::simulate_dj_performance() {
             }
 
             // each load updates track_titles and then process each track
-            for(int j = 0; j < track_titles.size(); j++){ 
+            for(size_t j = 0; j < track_titles.size(); j++){ 
                 std::string current_track = track_titles[j];
                 std::cout << "\n--- Processing: " << current_track << " ---" << std::endl;
                 stats.tracks_processed++;
                 
                 // Load track to controller
-                int load_result = load_track_to_controller(current_track);
+                load_track_to_controller(current_track);
                 // update the cache statistics based on the return value is handled in load_track_to_controller
                 
                 // Load track to mixer deck
@@ -235,13 +235,13 @@ void DJSession::simulate_dj_performance() {
             }
 
             // each load updates track_titles and then process each track
-            for(int j = 0; j < track_titles.size(); j++){
+            for(size_t j = 0; j < track_titles.size(); j++){
                 std::string current_track = track_titles[j];
                 std::cout << "\n--- Processing: " << current_track << " ---" << std::endl;
                 stats.tracks_processed++;
                 
                 // Load track to controller
-                int load_result = load_track_to_controller(current_track);
+                load_track_to_controller(current_track);
                 // update the cache statistics based on the return value is handled in load_track_to_controller
                 
                 // Load track to mixer deck

@@ -14,7 +14,7 @@ DJLibraryService::DJLibraryService(const Playlist& playlist)
  * @param library_tracks Vector of track info from config
  */
 void DJLibraryService::buildLibrary(const std::vector<SessionConfig::TrackInfo>& library_tracks) {    
-    for (int i = 0; i < library_tracks.size(); ++i) {
+    for (size_t i = 0; i < library_tracks.size(); ++i) {
         // (a) check foramt
         AudioTrack* newTrack = nullptr;
         bool isMP3 = false;
@@ -100,10 +100,10 @@ void DJLibraryService::loadPlaylistFromIndices(const std::string& playlist_name,
     playlist = Playlist(playlist_name);
 
     // (c) For each index in track_indices, add the corresponding track from library to the playlist
-    for (int i = 0; i < track_indices.size(); ++i){
+    for (size_t i = 0; i < track_indices.size(); ++i){
         // Validate index is within library bounds.
         int index = track_indices[i] - 1; // Convert 1-based to 0-based index
-        if (index < 0 || index >= library.size()){
+        if (index < 0 || index >= int(library.size())){
             std::cout << "[WARNING] Track index " << track_indices[i] 
                       << " is out of bounds. Skipping." << std::endl;
             continue; 
@@ -147,7 +147,7 @@ std::vector<std::string> DJLibraryService::getTrackTitles() const {
     std::vector<std::string> titles; // vector for titles
     std::vector<AudioTrack*> tracks = playlist.getTracks(); // vector for tracks
     
-    for(int i = 0; i < tracks.size(); ++i){
+    for(size_t i = 0; i < tracks.size(); ++i){
         titles.push_back(tracks[i]->get_title()); // push each track's title to titles vector 
     }
 

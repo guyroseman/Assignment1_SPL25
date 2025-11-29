@@ -105,7 +105,7 @@ size_t LRUCache::findLRUSlot() const {
     uint64_t lowest=0;
 
     // Iterate through all possible cache slots (up to max_size).
-    for(int i=0;i<max_size;i++){
+    for(size_t i=0;i<max_size;i++){
         //check if occupied
         if(slots[i].isOccupied()){
             //save the access time of the first occupied slot

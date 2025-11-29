@@ -41,20 +41,13 @@ AudioTrack::~AudioTrack() {
     delete[] waveform_data;
     waveform_data = nullptr;}
 
-AudioTrack::AudioTrack(const AudioTrack& other)
+AudioTrack::AudioTrack(const AudioTrack& other):title(other.title), artists(other.artists), duration_seconds(other.duration_seconds), bpm(other.bpm), 
+      waveform_data(nullptr), waveform_size(other.waveform_size) 
 {
     // TODO: Implement the copy constructor
     #ifdef DEBUG
     std::cout << "AudioTrack copy constructor called for: " << other.title << std::endl;
     #endif
-
-    // Shallow copy simple members.
-    title = other.title;
-    artists = other.artists;
-    duration_seconds = other.duration_seconds;
-    bpm = other.bpm;
-    waveform_size = other.waveform_size;
-
     // Deep Copy: Allocate new memory for waveform_data.
     waveform_data = new double[waveform_size]; 
     
@@ -101,28 +94,11 @@ AudioTrack& AudioTrack::operator=(const AudioTrack& other) {
     return *this;
 }
 
-AudioTrack::AudioTrack(AudioTrack&& other) noexcept {
+AudioTrack::AudioTrack(AudioTrack&& other) noexcept :title(std::move(other.title)), artists(std::move(other.artists)), duration_seconds(other.duration_seconds), bpm(other.bpm), 
+      waveform_data(nullptr), waveform_size(0){
     #ifdef DEBUG
     std::cout << "AudioTrack move constructor called for: " << other.title << std::endl;
     #endif
-    
-    // use std::move for containers.
-    // This calls the string/vector MOVE ASSIGNMENT operators, avoiding deep copies.
-    title = std::move(other.title);
-    artists = std::move(other.artists);
-    
-    // For primitive type shallow copy.
-    duration_seconds = other.duration_seconds;
-    bpm = other.bpm;
-    waveform_size = other.waveform_size;
-
-    // Move ownership: Steal the raw pointer.
-    waveform_data = other.waveform_data;
-
-    // Nullify the source pointer.
-    // This leaves 'other' in a valid, destructible state (prevents double-delete).
-    other.waveform_data = nullptr;
-    other.waveform_size = 0; // Set size to 0 for clarity/safety
 }
 
 AudioTrack& AudioTrack::operator=(AudioTrack&& other) noexcept {
