@@ -166,10 +166,7 @@ void DJSession::simulate_dj_performance() {
     std::cout << "BPM Tolerance: " << session_config.bpm_tolerance << " BPM" << std::endl;
     std::cout << "Auto Sync: " << (session_config.auto_sync ? "enabled" : "disabled") << std::endl;
     std::cout << "Cache Capacity: " << session_config.controller_cache_size << " slots (LRU policy)" << std::endl;
-    std::cout << "\n--- Processing Tracks ---" << std::endl;
-
-    std::cout << "TODO: Implement the DJ performance simulation workflow here." << std::endl;
-    
+    std::cout << "\n--- Processing Tracks ---" << std::endl;    
 
     // (b) playlist selection loop
 
@@ -203,17 +200,20 @@ void DJSession::simulate_dj_performance() {
                 load_track_to_controller(current_track);
                 // update the cache statistics based on the return value is handled in load_track_to_controller
                 
+                controller_service.displayCacheStatus();
                 // Load track to mixer deck
                 // note that all stats and deck management is handled inside the method load_track_to_mixer_deck
                 if(!load_track_to_mixer_deck(current_track)){
                     continue;
                 }
             }
+            mixing_service.displayDeckStatus();
             
             print_session_summary();
             // Reset stats for next playlist
             stats = SessionStats();
         }
+        
     }
     else{
         bool exit_requested = false;
@@ -244,22 +244,21 @@ void DJSession::simulate_dj_performance() {
                 load_track_to_controller(current_track);
                 // update the cache statistics based on the return value is handled in load_track_to_controller
                 
+                controller_service.displayCacheStatus();
                 // Load track to mixer deck
                 // note that all stats and deck management is handled inside the method load_track_to_mixer_deck
                 if(!load_track_to_mixer_deck(current_track)){
                     continue;
                 }
+            mixing_service.displayDeckStatus();
             }
-        }// end of while
-
             print_session_summary();
-            // Reset stats for next playlist
+        }// end of while
+        // Reset stats for next playlist
             stats = SessionStats();
     }
     // (e)
-    std::cout << "\n[System] DJ session ended by user or all playlists played." << std::endl;
-
-    
+    std::cout << "\n[System] DJ session ended by user or all playlists played." << std::endl;   
 }
 
 

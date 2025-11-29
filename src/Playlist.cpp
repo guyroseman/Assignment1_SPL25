@@ -52,8 +52,14 @@ Playlist& Playlist::operator=(const Playlist& other) {
         return *this;
     }
 
-    // Clean up existing resources
-    this->~Playlist();
+    // Clean up existing resources WITHOUT calling the destructor directly
+    PlaylistNode* current = head;
+    while (current) {
+        PlaylistNode* next_node = current->next;
+        delete current->track;
+        delete current;
+        current = next_node;
+    }
 
     // Copy playlist name
     playlist_name = other.playlist_name;
@@ -61,12 +67,12 @@ Playlist& Playlist::operator=(const Playlist& other) {
     track_count = 0;
 
     // Deep copy each track from the other playlist
-    PlaylistNode* current = other.head;
-    while (current) {
+    PlaylistNode* src = other.head;
+    while (src) {
         // Clone the AudioTrack to ensure deep copy
-        AudioTrack* cloned_track = current->track->clone().release();
+        AudioTrack* cloned_track = src->track->clone().release();
         add_track(cloned_track);
-        current = current->next;
+        src = src->next;
     }
 
     return *this;

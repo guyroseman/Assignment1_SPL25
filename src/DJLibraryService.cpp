@@ -17,15 +17,12 @@ void DJLibraryService::buildLibrary(const std::vector<SessionConfig::TrackInfo>&
     for (size_t i = 0; i < library_tracks.size(); ++i) {
         // (a) check foramt
         AudioTrack* newTrack = nullptr;
-        bool isMP3 = false;
         if(library_tracks[i].type == "MP3"){
             // (b) create appropriate MP3 track type 
             newTrack = new MP3Track(library_tracks[i].title, library_tracks[i].artists,
                  library_tracks[i].duration_seconds,
                  library_tracks[i].bpm,library_tracks[i].extra_param1, // extra_param1 = bitrate,
                  library_tracks[i].extra_param2);  // extra_param2 = has_tags
-            
-            isMP3 = true;
         }
         // (b) create appropriate WAV track type
         else{
@@ -39,15 +36,6 @@ void DJLibraryService::buildLibrary(const std::vector<SessionConfig::TrackInfo>&
         library.push_back(newTrack);
         
         // (d) print log creation message
-        if(isMP3){
-            std::cout << "– MP3: MP3Track created: " 
-                      << library_tracks[i].extra_param1 << " kbps" << std::endl;
-        }
-        else{
-            std::cout << "– WAV: WAVTrack created: " 
-                      << library_tracks[i].extra_param1 << "Hz/"
-                      << library_tracks[i].extra_param2 << "bit" << std::endl;
-        }
     }
     std::cout << "[INFO] Track library built: " 
                       << library_tracks.size() << " tracks loaded" << std::endl; 
@@ -126,9 +114,6 @@ void DJLibraryService::loadPlaylistFromIndices(const std::string& playlist_name,
 
             // Add cloned track to playlist
             playlist.add_track(cloned_track.release());
-
-            // log addition
-            std::cout << "Added '" << track_title << "' to playlist '" << playlist_name << "'" << std::endl;
         }   
     }
     // log summary 
