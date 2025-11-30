@@ -206,15 +206,14 @@ void DJSession::simulate_dj_performance() {
                 if(!load_track_to_mixer_deck(current_track)){
                     continue;
                 }
-            }
-            mixing_service.displayDeckStatus();
-            
+                mixing_service.displayDeckStatus();
+            }            
             print_session_summary();
-            // Reset stats for next playlist
-            stats = SessionStats();
         }
-        
+        // Reset stats for next playlist
+        stats = SessionStats();
     }
+
     else{
         bool exit_requested = false;
         while(!exit_requested){
