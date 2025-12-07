@@ -40,8 +40,6 @@ MixingEngineService::~MixingEngineService() {
  */
 int MixingEngineService::loadTrackToDeck(const AudioTrack& track) {
     size_t load_index;
-    size_t prev_active_deck = active_deck; // Store previous active state
-
     // (d) Identify target deck:
     if (decks[0] == nullptr && decks[1] == nullptr) {
         // Case 1: Both decks are empty. Load to Deck 0 and make it active.
@@ -67,8 +65,6 @@ int MixingEngineService::loadTrackToDeck(const AudioTrack& track) {
 
     // (e) Unload target deck if occupied
     if (decks[load_index] != nullptr) {
-        std::cout << "[Unload Target] Unloading old track from deck " << load_index 
-                  << " (" << decks[load_index]->get_title() << ")" << std::endl;
         delete decks[load_index];
         decks[load_index] = nullptr;
     }
@@ -88,13 +84,6 @@ int MixingEngineService::loadTrackToDeck(const AudioTrack& track) {
     // (i) Switch active deck
     active_deck = load_index;
 
-    // (j) Unload previous active deck
-    if (prev_active_deck != active_deck && decks[prev_active_deck] != nullptr){
-        std::cout << "[Unload] Unloading previous deck " << prev_active_deck 
-                  << " (" << decks[prev_active_deck]->get_title() << ")" << std::endl;
-        delete decks[prev_active_deck];
-        decks[prev_active_deck] = nullptr;
-    }
 
     std::cout << "[Active Deck] Switched to deck " << active_deck << std::endl;
 
@@ -126,6 +115,7 @@ void MixingEngineService::displayDeckStatus() const {
  */
 bool MixingEngineService::can_mix_tracks(const PointerWrapper<AudioTrack>& track) const {
     if(decks[active_deck] == nullptr || !track) {
+        std::cerr << "[Sync BPM] Cannot sync - one of the decks is empty." << std::endl;
         return false; // Cannot mix if active deck is empty or track is null
     }
     int bpm_active = decks[active_deck]->get_bpm();
